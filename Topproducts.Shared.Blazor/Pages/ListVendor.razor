@@ -1,0 +1,153 @@
+@page "/vendor"
+@inject AppService AppService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject HttpClient HttpClient
+@attribute [Authorize]
+
+<PageTitle>Vendor</PageTitle>
+
+<div class="mb-3">
+    <MudText Typo="Typo.h3">Vendor</MudText>
+</div>
+
+<MudStack AlignItems="AlignItems.End" Class="mb-3">
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.AddCircleOutline" Color="Color.Primary" OnClick="@(e => OnAdd())">Add</MudButton>
+</MudStack>
+
+@if (VendorResult != null)
+{
+    <MudText Class="mt-6 mb-3" Typo="Typo.h5">Cards</MudText>
+    <MudGrid Class="mb-3">
+        @foreach (var Vendor in VendorResult.Value ?? Enumerable.Empty<Vendor>())
+        {
+            var thisVendor = Vendor;
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudCard Class="d-flex flex-column mud-height-full">
+                    <MudCardContent>
+                        @* <MudText Typo="Typo.body2"><strong>Id:</strong> @Vendor.Id</MudText> *@
+                        <MudText Typo="Typo.body2"><strong>Type:</strong> @Vendor.Type</MudText>
+                        <MudText Typo="Typo.body2"><strong>Company:</strong> @Vendor.Company</MudText>
+                        <MudText Typo="Typo.body2"><strong>Contact Name:</strong> @Vendor.ContactName</MudText>
+                        <MudText Typo="Typo.body2"><strong>Phone Number:</strong> @Vendor.PhoneNumber</MudText>
+                        <MudText Typo="Typo.body2"><strong>Email:</strong> @Vendor.Email</MudText>
+                        <MudText Typo="Typo.body2"><strong>Street Address:</strong> @Vendor.StreetAddress</MudText>
+                        <MudText Typo="Typo.body2"><strong>City:</strong> @Vendor.City</MudText>
+                        <MudText Typo="Typo.body2"><strong>State:</strong> @Vendor.State</MudText>
+                        <MudText Typo="Typo.body2"><strong>Zip:</strong> @Vendor.Zip</MudText>
+                        <MudText Typo="Typo.body2"><strong>Country:</strong> @Vendor.Country</MudText>
+                    </MudCardContent>
+                    <MudCardActions Class="mt-auto">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(e => OnEdit(thisVendor))">Edit</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(e => OnDelete(thisVendor))">Delete</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+
+    <div class="d-flex align-center justify-center mb-3">
+        <MudPagination Color="Color.Primary" Count="pageCount" Selected="selectedPage" SelectedChanged="OnSelectedChangedAsync" />
+    </div>
+}
+
+@code {
+     private const int PageSize = 10;
+     private AppService.ODataResult<Vendor>? VendorResult;
+     private int pageCount = 1;
+     private int selectedPage = 1;
+
+     protected override async Task OnInitializedAsync()
+     {
+         await ReloadDataAsync();
+     }
+
+     private async Task OnSelectedChangedAsync(int selected)
+     {
+         selectedPage = selected;
+         await ReloadDataAsync();
+     }
+
+     private async Task ReloadDataAsync()
+     {
+         var skip = (selectedPage - 1) * PageSize;
+
+         VendorResult = await AppService.ListVendorODataAsync(PageSize, skip, "Company ASC", "", count: true, null);
+
+         if (VendorResult?.Count.HasValue ?? false)
+         {
+             pageCount = (int)Math.Ceiling((double)VendorResult.Count.Value / PageSize);
+         }
+         else
+         {
+             pageCount = 1;
+         }
+         StateHasChanged();
+     }
+
+    private string GetAbsoluteUri(string uri)
+    {
+        if (!uri.StartsWith("/"))
+        {
+            return uri;
+        }
+
+        var baseUri = HttpClient.BaseAddress;
+
+        if (baseUri == null)
+        {
+            throw new Exception("Unable to determine base address");
+        }
+
+        Uri absolute = new(baseUri, uri);
+
+        return absolute.ToString();
+    }
+
+    private async void OnAdd()
+    {
+        DialogOptions dialogOptions = new() { FullWidth = true, CloseOnEscapeKey = true };
+
+        var result = await DialogService.Show<AddVendor>("Add Vendor", dialogOptions).Result;
+
+        if (!result.Canceled)
+        {
+            await ReloadDataAsync();
+        }
+    }
+
+    private async void OnEdit(Vendor record)
+    {
+        DialogParameters<UpdateVendor> dialogParams = new() { { x => x.Id, record.Id!.Value } };
+        DialogOptions dialogOptions = new() { FullWidth = true, CloseOnEscapeKey = true };
+
+        var result = await DialogService.Show<UpdateVendor>("Update Vendor", dialogParams, dialogOptions).Result;
+
+        if (!result.Canceled)
+        {
+            await ReloadDataAsync();
+        }
+    }
+
+    private async void OnDelete(Vendor record)
+    {
+        var result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Are you sure you want to delete this record?",
+            "Delete",
+            "Cancel");
+
+        if (result.GetValueOrDefault(false))
+        {
+            try
+            {
+                await AppService.DeleteVendorAsync(record.Id!.Value);
+                await ReloadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        }
+    }
+}

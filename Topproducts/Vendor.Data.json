@@ -1,0 +1,67 @@
+[
+  {
+    "Id": 1,
+    "Type": "Robotics and AI",
+    "Company": "Quantum Innovations",
+    "ContactName": "Dr. Sophia Chen",
+    "PhoneNumber": "\u002B1 (555) 123-4567",
+    "Email": "info@quantuminnovations.com",
+    "StreetAddress": "123 Quantum Avenue",
+    "City": "NeoTech City",
+    "State": "Futura",
+    "Zip": "98765",
+    "Country": "United States"
+  },
+  {
+    "Id": 2,
+    "Type": "Virtual Reality",
+    "Company": "HoloTech Solutions",
+    "ContactName": "Alex Reynolds",
+    "PhoneNumber": "\u002B44 20 1234 5678",
+    "Email": "sales@holotechsolutions.co.uk",
+    "StreetAddress": "456 Holo Street",
+    "City": "Cyberopolis",
+    "State": "VRland",
+    "Zip": "SW1A 1AA",
+    "Country": "United Kingdom"
+  },
+  {
+    "Id": 3,
+    "Type": "Biotechnology",
+    "Company": "BioFusion Labs",
+    "ContactName": "Dr. Elena Rodriguez",
+    "PhoneNumber": "\u002B81 3 9876 5432",
+    "Email": "info@biofusionlabs.jp",
+    "StreetAddress": "789 Gene Drive",
+    "City": "Genetropolis",
+    "State": "BioTech Prefecture",
+    "Zip": "123-4567",
+    "Country": "Japan"
+  },
+  {
+    "Id": 4,
+    "Type": "Space Exploration",
+    "Company": "Stellar Ventures",
+    "ContactName": "Captain Mark Armstrong",
+    "PhoneNumber": "\u002B1 (321) 987-6543",
+    "Email": "contact@stellarventures.space",
+    "StreetAddress": "101 Starship Lane",
+    "City": "Astroville",
+    "State": "Orbital State",
+    "Zip": "54321",
+    "Country": "International Space"
+  },
+  {
+    "Id": 5,
+    "Type": "Nanotechnology",
+    "Company": "NanoGen Innovations",
+    "ContactName": "Dr. Maria Silva",
+    "PhoneNumber": "\u002B49 30 8765 4321",
+    "Email": "nanotech@nanogen.com",
+    "StreetAddress": "234 Nano Street",
+    "City": "NanoCity",
+    "State": "NanoLand",
+    "Zip": "98765",
+    "Country": "Germany"
+  }
+]
